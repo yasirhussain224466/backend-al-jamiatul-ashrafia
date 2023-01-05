@@ -2,7 +2,6 @@ const Book = require("../models/book");
 const cloudinary = require("../services/cloudinary");
 
 exports.addBook = async (req, res, next) => {
-    console.log("Hello")
     try {
         const book = await Book.create(req.body);
         if (req.file) {
