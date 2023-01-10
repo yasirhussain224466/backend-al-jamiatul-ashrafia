@@ -9,6 +9,6 @@ route.get("/", getMarquee);
 
 route.post("/", addMarquee);
 
-route.get("/:id", updateMarquee);
+route.put("/:id", updateMarquee);
 
 module.exports = route;
