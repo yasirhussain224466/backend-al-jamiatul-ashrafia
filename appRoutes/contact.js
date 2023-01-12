@@ -3,12 +3,16 @@ const {
     addContactUsForm,
     getContactUsForm,
     getParticularContactUsForm,
+    updateParticularContactUsForm,
+    deleteParticularContactUsForm,
+    markAsRead,
 } = require("../controllers/contact");
 
 route.get("/", getContactUsForm);
-
 route.post("/", addContactUsForm);
-
-route.put("/:id", getParticularContactUsForm);
+route.put("/markAsRead", markAsRead);
+route.get("/:id", getParticularContactUsForm);
+route.put("/:id", updateParticularContactUsForm);
+route.delete("/:id", deleteParticularContactUsForm);
 
 module.exports = route;

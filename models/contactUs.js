@@ -30,6 +30,9 @@ const contact = new Schema({
         trim: true,
         required: true,
     },
+    seen: {
+        type: Boolean,
+    },
     createdAt: {
         type: Date,
         default: Date.now,

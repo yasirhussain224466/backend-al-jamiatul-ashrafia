@@ -14,10 +14,34 @@ exports.addContactUsForm = async (req, res, next) => {
 
 exports.getContactUsForm = async (req, res, next) => {
     try {
-        const contactInfo = await ContactUs.find();
+        let contactInfo;
+        if (req.query?.seen === "true" || req.query?.seen === "false") {
+            contactInfo = await ContactUs.find({
+                seen: req.query?.seen,
+            }).sort({ createdAt: -1 });
+            res.status(200).json({
+                status: "Success",
+                result: contactInfo.length,
+                data: contactInfo,
+            });
+        } else {
+            contactInfo = await ContactUs.find().sort({ createdAt: -1 });
+            res.status(200).json({
+                status: "Success",
+                result: contactInfo.length,
+                data: contactInfo,
+            });
+        }
+    } catch (error) {
+        return next(error);
+    }
+};
+
+exports.getParticularContactUsForm = async (req, res, next) => {
+    try {
+        const contactInfo = await ContactUs.findById({ _id: req.params.id });
         res.status(200).json({
             status: "Success",
-            result: contactInfo.length,
             data: contactInfo,
         });
     } catch (error) {
@@ -25,14 +49,48 @@ exports.getContactUsForm = async (req, res, next) => {
     }
 };
 
-exports.getParticularContactUsForm = async (req, res, next) => {
- try {
-     const contactInfo = await ContactUs.findById({_id: req.params.id});
-     res.status(200).json({
-         status: "Success",
-         data: contactInfo,
-     });
- } catch (error) {
-     return next(error);
- }
+exports.updateParticularContactUsForm = async (req, res, next) => {
+    try {
+        const contactInfo = await ContactUs.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+        res.status(200).json({
+            status: "Success",
+            data: contactInfo,
+        });
+    } catch (error) {
+        return next(error);
+    }
+};
+
+exports.markAsRead = async (req, res, next) => {
+    try {
+        console.log("hello")
+        const contactInfo = await ContactUs.updateMany({}, req.body, {
+            new: true,
+            runValidators: false,
+        });
+        res.status(200).json({
+            status: "Success",
+            data: contactInfo,
+        });
+    } catch (error) {
+        return next(error);
+    }
+};
+
+exports.deleteParticularContactUsForm = async (req, res, next) => {
+    try {
+        await ContactUs.findByIdAndDelete({ _id: req.params.id });
+        res.status(200).json({
+            status: "Success",
+        });
+    } catch (error) {
+        return next(error);
+    }
 };
