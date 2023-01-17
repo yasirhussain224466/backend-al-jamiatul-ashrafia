@@ -19,20 +19,27 @@ exports.getContactUsForm = async (req, res, next) => {
             contactInfo = await ContactUs.find({
                 seen: req.query?.seen,
             }).sort({ createdAt: -1 });
-            res.status(200).json({
-                status: "Success",
-                result: contactInfo.length,
-                data: contactInfo,
-            });
         } else {
             contactInfo = await ContactUs.find().sort({ createdAt: -1 });
-            res.status(200).json({
-                status: "Success",
-                result: contactInfo.length,
-                data: contactInfo,
-            });
         }
+
+        const seenLen = await await ContactUs.countDocuments({
+            seen: true,
+        });
+        const unSeenLen = await ContactUs.countDocuments({
+            seen: false,
+        });
+        const total = await ContactUs.countDocuments();
+        console.log({ seenLen, unSeenLen });
+        res.status(200).json({
+            status: "Success",
+            seenLen,
+            unSeenLen,
+            total,
+            data: contactInfo,
+        });
     } catch (error) {
+        console.log(error);
         return next(error);
     }
 };
@@ -70,7 +77,7 @@ exports.updateParticularContactUsForm = async (req, res, next) => {
 
 exports.markAsRead = async (req, res, next) => {
     try {
-        console.log("hello")
+        console.log("hello");
         const contactInfo = await ContactUs.updateMany({}, req.body, {
             new: true,
             runValidators: false,
